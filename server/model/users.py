@@ -8,3 +8,12 @@ class Users(db.Model):
     password = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(20), nullable=False)
     phone = db.Column(db.String(20))
+
+    def get_data_object(self):
+        data = {
+            'id' : self.id,
+            'email' : self.email,
+            'name' : self.name,
+            'phone_num' : self.phone
+        }
+        return data

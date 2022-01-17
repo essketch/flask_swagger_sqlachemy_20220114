@@ -80,6 +80,9 @@ class User(Resource):
             return {
                 'code' : 200,
                 'message' : '로그인 성공',
+                'data' : {
+                    'user' : login_user.get_data_object()
+                }
             }
         else:
             return {
