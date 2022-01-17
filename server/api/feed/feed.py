@@ -56,7 +56,7 @@ class Feed(Resource):
         args = post_parser.parse_args()
         new_feed = Feeds()
         new_feed.user_id = args['user_id']
-        new_feed.lecture_id = args['lectur_id']
+        new_feed.lecture_id = args['lecture_id']
         new_feed.content = args['content']
 
         db.session.add(new_feed)

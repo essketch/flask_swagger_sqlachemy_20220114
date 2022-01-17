@@ -24,10 +24,9 @@ delete_parser = reqparse.RequestParser()
 delete_parser.add_argument('user_id', type=int, required=True, location='args')
 
 patch_parser = reqparse.RequestParser()
-delete_parser.add_argument('user_id', type=int, required=True, location='form')
-delete_parser.add_argument('field', type=str, required=True, location='form')
-delete_parser.add_argument('value', type=str, required=True, location='form')
-
+patch_parser.add_argument('user_id', type=int, required=True, location='form')
+patch_parser.add_argument('field', type=str, required=True, location='form')
+patch_parser.add_argument('value', type=str, required=True, location='form')
 
 
 class User(Resource):
@@ -64,15 +63,22 @@ class User(Resource):
         """사용자 정보 조회"""
         args = get_parser.parse_args()
         user_by_email = Users.query.filter(Users.email == args['email']).first()
-        if user_by_email:
-            return {
-                'code': 200,
-                'message' : '사용자 이메일 검색 성공',
-                'data' : {
-                    'user' : user_by_email.get_data_object()
+        if args ['email']:
+            if user_by_email:
+                return {
+                    'code': 200,
+                    'message' : '사용자 이메일 검색 성공',
+                    'data' : {
+                        'user' : user_by_email.get_data_object()
+                    }
                 }
-            }
+            else:
+                return {
+                    'code' : 400,
+                    'message' : '검색 결과가 없습니다.'
+                }, 400
 
+    
         if args['name']:
             users_by_name = Users.query.filter(Users.name.like(f"%{args['name']}%")).all()
             searched_users_list = [user.get_data_object(need_feeds=True) for user in users_by_name]
@@ -85,14 +91,11 @@ class User(Resource):
                     }
                 }
             }
-   
         return {
             'code' : 400,
             'message' : '검색 결과가 없습니다.'
         }, 400
 
-
-    
     @swagger.doc({
         'tags' : ['user'],
         'description' : '로그인',
@@ -150,8 +153,7 @@ class User(Resource):
                 'code' : 400,
                 'message' : '비밀번호가 틀렸습니다.',
             }, 400
-
-    
+ 
     @swagger.doc({
         'tags' : ['user'],
         'description' : '회원가입',
