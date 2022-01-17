@@ -8,12 +8,24 @@ class Users(db.Model):
     password = db.Column(db.String(50), nullable=False)
     name = db.Column(db.String(20), nullable=False)
     phone = db.Column(db.String(20))
+    birth_year = db.Column(db.Integer, nullable=False, default=1995)
+    created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    retired_at = db.Column(db.DateTime)
 
-    def get_data_object(self):
+    my_feeds = db.relationship('Feeds')
+
+    def get_data_object(self, need_feeds=False):
         data = {
             'id' : self.id,
             'email' : self.email,
             'name' : self.name,
-            'phone_num' : self.phone
+            'phone' : self.phone,
+            'birth_year' : self.birth_year,
+            'created_at' : str(self.created_at),
+            'retired_at' : str(self.retired_at) if self.retired_at else None,
         }
+
+        if need_feeds:
+            data['my_feeds'] = [feed.get_data_object(need_writer=False) for feed in self.my_feeds]
+
         return data
