@@ -70,25 +70,23 @@ class User(Resource):
     def post(self):
         """로그인"""
         args = post_parser.parse_args()
+        #filter는 성능에 영향을 주지 않음
         login_user = Users.query\
             .filter(Users.email == args['email'])\
             .filter(Users.password == args['password'])\
             .first()
-        print('로그인 유저 : ', login_user)
+        
+        if login_user:
+            return {
+                'code' : 200,
+                'message' : '로그인 성공',
+            }
+        else:
+            return {
+                'code' : 400,
+                'message' : '로그인 실패',
+            }, 400
 
-
-        # first_user=Users.query.first()
-        # all_users = Users.query.all()
-        # print(all_users)
-        # for user in all_users:
-        #     print('사용자 이름 : ', user.name)
-
-        print(f"이메일 : {args['email']}")
-        print(f"비밀번호 : {args['password']}")
-
-        return {
-            "":""
-        }
     
     @swagger.doc({
         'tags' : ['user'],
