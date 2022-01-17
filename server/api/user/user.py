@@ -80,7 +80,7 @@ class User(Resource):
         if login_user == None:
             return{
                 'code' : 400,
-                'message' : '잘못된 이메일 입니다.',
+                'message' : '잘못된 이메일입니다.',
             }, 400
 
         
@@ -95,7 +95,7 @@ class User(Resource):
         else:
             return {
                 'code' : 400,
-                'message' : '로그인 실패',
+                'message' : '비밀번호가 틀렸습니다.',
             }, 400
 
     
@@ -144,6 +144,16 @@ class User(Resource):
     def put(self):
         """회원가입"""
         args = put_parser.parse_args()
+
+        already_email_user = Users.query\
+            .filter(Users.email == args['email'])\
+            .first()
+        
+        if already_email_user:
+            return {
+                'code' : 400,
+                'message' : '중복된 이메일입니다.'
+            }, 400
 
         new_user = Users()
         new_user.email = args['email']
