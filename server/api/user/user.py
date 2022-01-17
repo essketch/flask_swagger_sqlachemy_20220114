@@ -1,12 +1,12 @@
-import email
+
 from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import swagger
+from server.model import Users
 
 #파라미터 받기
 post_parser = reqparse.RequestParser()
 post_parser.add_argument('email', type=str, required=True, location='form')
 post_parser.add_argument('password', type=str, required=True, location='form')
-
 put_parser = reqparse.RequestParser()
 put_parser.add_argument('email', type=str, required=True, location='form')
 put_parser.add_argument('password', type=str, required=True, location='form')
@@ -70,6 +70,18 @@ class User(Resource):
     def post(self):
         """로그인"""
         args = post_parser.parse_args()
+        login_user = Users.query\
+            .filter(Users.email == args['email'])\
+            .filter(Users.password == args['password'])\
+            .first()
+        print('로그인 유저 : ', login_user)
+
+
+        # first_user=Users.query.first()
+        # all_users = Users.query.all()
+        # print(all_users)
+        # for user in all_users:
+        #     print('사용자 이름 : ', user.name)
 
         print(f"이메일 : {args['email']}")
         print(f"비밀번호 : {args['password']}")
