@@ -154,6 +154,16 @@ class User(Resource):
                 'code' : 400,
                 'message' : '중복된 이메일입니다.'
             }, 400
+        
+        already_phone_user = Users.query\
+            .filter(Users.phone == args['phone'])\
+            .first()
+        
+        if already_phone_user:
+            return {
+                'code' : 400,
+                'message' : '이미 가입한 번호입니다.'
+            }, 400
 
         new_user = Users()
         new_user.email = args['email']
