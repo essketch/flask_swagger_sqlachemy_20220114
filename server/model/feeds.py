@@ -5,10 +5,12 @@ class Feeds(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    lecture_id = db.Column(db.Integer)
+    lecture_id = db.Column(db.Integer, db.ForeignKey('lectures.id'))
     content = db.Column(db.TEXT, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
+    
     writer = db.relationship('Users')
+    lecture = db.relationship('Lectures')
 
     def get_data_object(self, need_writer=True):
         data = {
@@ -19,6 +21,8 @@ class Feeds(db.Model):
             'created_at' : str(self.created_at),
         }
         if need_writer:
-            data['write'] = self.writer.get_data_object()
-        # print(f"{self.id}번 글 작성자 : {self.writer}")
+            data['writer'] = self.writer.get_data_object()
+        
+        data['lecture'] = self.lecture.get_data_object()
+
         return data
