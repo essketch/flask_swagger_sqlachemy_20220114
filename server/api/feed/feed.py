@@ -9,6 +9,7 @@ from flask import current_app
 import time
 import os
 import hashlib
+from server.api.utils import token_required
 
 
 
@@ -25,10 +26,10 @@ class Feed(Resource):
         'description' : '게시글 등록',
         'parameters' : [
             {
-            'name' : 'user_id',
-            'description' : '작성자',
-            'in' : 'formData',
-            'type' : 'integer',
+            'name' : 'X-Http-Token',
+            'description' : '작성자, 토큰으로',
+            'in' : 'header',
+            'type' : 'string',
             'required' : True
             },
             {
@@ -65,8 +66,11 @@ class Feed(Resource):
             }
         }
     })
+
+    @token_required
     def post(self):
         """게시글 등록"""
+
         args = post_parser.parse_args()
         new_feed = Feeds()
         new_feed.user_id = args['user_id']
@@ -100,6 +104,7 @@ class Feed(Resource):
                 feed_img.feed_id = new_feed.id
                 feed_img.img_url = s3_file_name
                 db.session.add(feed_img)
+
             db.session.commit()
 
         return {
