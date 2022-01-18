@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import swagger
 from server import db
 from server.model import Feeds
+from werkzeug.datastructures import FileStorage
 
 
 
@@ -10,6 +11,7 @@ post_parser = reqparse.RequestParser()
 post_parser.add_argument('user_id', type=int, required=True, location='form')
 post_parser.add_argument('lecture_id', type=int, required=True, location='form')
 post_parser.add_argument('content', type=str, required=True, location='form')
+post_parser.add_argument('feed_images', type=FileStorage, required=False, location='files', action='append')
 
 
 class Feed(Resource):
@@ -61,6 +63,11 @@ class Feed(Resource):
 
         db.session.add(new_feed)
         db.session.commit()
+
+        if args['feed_images']:
+            for image in args['feed_images']:
+                pass
+
 
         return {
             'code' : 200,
