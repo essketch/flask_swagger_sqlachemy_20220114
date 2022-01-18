@@ -29,7 +29,6 @@ def decode_token(token):
             .filter(Users.email == decoded_dict['email'])\
             .filter(Users.password == decoded_dict['password'])\
             .first()
-
         return user
     
     except jwt.exceptions.DecodeError:
@@ -43,7 +42,6 @@ def token_required(func):
 
         if user:
             g.user = user
-            
             return func(*args, **kwargs)
 
         else:
