@@ -1,7 +1,7 @@
 from server import db
 
 class FeedImages(db.Model):
-    __tablename__ = 'feeds_images'
+    __tablename__ = 'feed_images'
 
     id = db.Column(db.Integer, primary_key=True)
     feed_id = db.Column(db.Integer, db.ForeignKey('feeds.id'))
@@ -13,5 +13,7 @@ class FeedImages(db.Model):
             'feed_id' : self.feed_id,
             'img_url' : self.img_url,
         }
+
+        print('부모 : ', self.feed)
 
         return data

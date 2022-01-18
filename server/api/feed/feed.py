@@ -2,7 +2,7 @@
 from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import swagger
 from server import db
-from server.model import Feeds, Users
+from server.model import Feeds, Users, FeedImages
 from werkzeug.datastructures import FileStorage
 import boto3
 from flask import current_app
@@ -45,6 +45,13 @@ class Feed(Resource):
             'type' : 'string',
             'required' : True
             },
+            {
+            'name' : 'feed_images',
+            'description' : '게시글 첨부 사진',
+            'in' : 'formData',
+            'type' : 'file',
+            'required' : False
+            },
 
         ],
         'responses': {
@@ -78,12 +85,22 @@ class Feed(Resource):
 
             for image in args['feed_images']:
                 _, file_extension = os.path.splitext(image.filename)
-                s3_file_name = f"images/feed_images/MySNS_{hashlib.md5(upload_user.email.encode('utf8')).hexdigest}{round(time.time()*10000)}{file_extension}"
-
-
-
-                pass
-
+                encrypted_user_email = hashlib.md5(upload_user.email.encode('utf8')).hexdigest()
+                now_number = round(time.time()*10000)
+                s3_file_name = f"images/feed_images/MySNS_{encrypted_user_email}{now_number}{file_extension}"
+                image_body = image.stream.read()
+                aws_s3.\
+                    Bucket(current_app.config['AWS_S3_BUCKET_NAME']).\
+                    put_object(Key=s3_file_name, Body=image_body)
+                aws_s3.\
+                    ObjectAcl(current_app.config['AWS_S3_BUCKET_NAME'], s3_file_name).\
+                    put(ACL='public-read')
+                
+                feed_img = FeedImages()
+                feed_img.feed_id = new_feed.id
+                feed_img.img_url = s3_file_name
+                db.session.add(feed_img)
+            db.session.commit()
 
         return {
             'code' : 200,

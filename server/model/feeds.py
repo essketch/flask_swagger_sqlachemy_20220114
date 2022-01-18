@@ -1,4 +1,5 @@
 from server import db
+from server.model import feed_images
 
 class Feeds(db.Model):
     __tablename__ = 'feeds'
@@ -11,6 +12,7 @@ class Feeds(db.Model):
     
     writer = db.relationship('Users')
     lecture = db.relationship('Lectures')
+    feed_images = db.relationship('FeedImages', backref='feed')
 
     def get_data_object(self, need_writer=True):
         data = {
@@ -19,6 +21,7 @@ class Feeds(db.Model):
             'lecture_id' : self.lecture_id,
             'content' : self.content,
             'created_at' : str(self.created_at),
+            'images' : [fi.get_data_object() for fi in self.feed_images]
         }
         if need_writer:
             data['writer'] = self.writer.get_data_object()
