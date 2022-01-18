@@ -8,6 +8,8 @@ class Config(object):
     AWS_ACCESS_KEY_ID = 'AKIAUGPOH6LYW2UAOU7P'
     AWS_SECRET_ACCESS_KEY = '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'
     AWS_S3_BUCKET_NAME = 'python202201kbj'
+    JWT_ALGORITHM = 'HS512'
+    JWT_SECRET = 'my_strong_key'
 
 
 class ProductionConfig(Config): #기본설정 그대로
