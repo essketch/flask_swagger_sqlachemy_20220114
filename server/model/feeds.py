@@ -10,7 +10,6 @@ class Feeds(db.Model):
     content = db.Column(db.TEXT, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
     
-    writer = db.relationship('Users')
     feed_images = db.relationship('FeedImages', backref='feed')
 
     def get_data_object(self, need_writer=True):

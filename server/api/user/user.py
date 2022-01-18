@@ -3,6 +3,7 @@ from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import swagger
 from server.model import Users
 from server import db
+from server.api.utils import encode_token
 import datetime
 
 #파라미터 받기
@@ -145,7 +146,8 @@ class User(Resource):
                 'code' : 200,
                 'message' : '로그인 성공',
                 'data' : {
-                    'user' : login_user.get_data_object()
+                    'user' : login_user.get_data_object(),
+                    'token' : encode_token(login_user)
                 }
             }
         else:
@@ -233,7 +235,8 @@ class User(Resource):
             "code" : 200,
             'message' : '회원가입 성공',
             'data' : {
-                'user' : new_user.get_data_object()
+                'user' : new_user.get_data_object(),
+                'token' : encode_token(new_user)
             }
         }
 

@@ -1,10 +1,11 @@
 from functools import wraps
 import jwt
-from flask import current_app
+from flask import current_app, g
 from server.model import Users
 from flask_restful import reqparse
 
 token_parser = reqparse.RequestParser()
+token_parser.add_argument('X-Http-Token', type=str, required=True, location='headers')
 
 
 def encode_token(user):
@@ -12,7 +13,7 @@ def encode_token(user):
     return jwt.encode(
         {'id' : user.id,'email' : user.email,'password' : user.password,},
         current_app.config['JWT_SECRET'],
-        algorithm=current_app.config['JMT_ALGORITHM'],
+        algorithm=current_app.config['JWT_ALGORITHM'],
         )
 
 def decode_token(token):
@@ -41,6 +42,8 @@ def token_required(func):
         user = decode_token(args['X-Http-Token'])
 
         if user:
+            g.user = user
+            
             return func(*args, **kwargs)
 
         else:

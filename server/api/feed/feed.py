@@ -5,7 +5,7 @@ from server import db
 from server.model import Feeds, Users, FeedImages
 from werkzeug.datastructures import FileStorage
 import boto3
-from flask import current_app
+from flask import current_app, g
 import time
 import os
 import hashlib
@@ -14,7 +14,6 @@ from server.api.utils import token_required
 
 
 post_parser = reqparse.RequestParser()
-post_parser.add_argument('user_id', type=int, required=True, location='form')
 post_parser.add_argument('lecture_id', type=int, required=True, location='form')
 post_parser.add_argument('content', type=str, required=True, location='form')
 post_parser.add_argument('feed_images', type=FileStorage, required=False, location='files', action='append')
@@ -69,11 +68,12 @@ class Feed(Resource):
 
     @token_required
     def post(self):
-        """게시글 등록"""
+        """게시글 등록""" 
 
         args = post_parser.parse_args()
+        user = g.user
         new_feed = Feeds()
-        new_feed.user_id = args['user_id']
+        new_feed.user_id = user.id
         new_feed.lecture_id = args['lecture_id']
         new_feed.content = args['content']
 
@@ -81,7 +81,7 @@ class Feed(Resource):
         db.session.commit()
 
         if args['feed_images']:
-            upload_user = Users.query.filter(Users.id == args['user_id']).first()
+            upload_user = user
 
             aws_s3 = boto3.resource('s3',\
                 aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],\
@@ -104,7 +104,6 @@ class Feed(Resource):
                 feed_img.feed_id = new_feed.id
                 feed_img.img_url = s3_file_name
                 db.session.add(feed_img)
-
             db.session.commit()
 
         return {

@@ -13,7 +13,7 @@ class Users(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
     retired_at = db.Column(db.DateTime)
 
-    my_feeds = db.relationship('Feeds')
+    my_feeds = db.relationship('Feeds', backref='writer')
 
     def get_data_object(self, need_feeds=False):
         data = {

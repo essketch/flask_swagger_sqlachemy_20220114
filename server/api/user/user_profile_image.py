@@ -61,7 +61,7 @@ class UserProfileImage(Resource):
             new_file_name=f"MySNS_{hashlib.md5(user_email.encode('utf8')).hexdigest()}{now}"
             #확장자 추출
             _, file_extension = os.path.splitext(file.filename)
-            new_file_name = f"{new_file_name}{file_extension}"
+            new_file_name = f"{new_file_name}{file_extension}" 
             #올라갈 경로
             s3_file_path = f'images/profile_imgs/{new_file_name}' 
             #올려줄 파일
