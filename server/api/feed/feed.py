@@ -70,9 +70,15 @@ class Feed(Resource):
         db.session.commit()
 
         if args['feed_images']:
+            upload_user = Users.query.filter(Users.id == args['user_id']).first()
 
+            aws_s3 = boto3.resource('s3',\
+                aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],\
+                aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'])
 
             for image in args['feed_images']:
+                _, file_extension = os.path.splitext(image.filename)
+                s3_file_name = f"images/feed_images/MySNS_{hashlib.md5(upload_user.email.encode('utf8')).hexdigest}{round(time.time()*10000)}{file_extension}"
 
 
 
