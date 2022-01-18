@@ -11,7 +11,6 @@ class Feeds(db.Model):
     created_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp())
     
     writer = db.relationship('Users')
-    lecture = db.relationship('Lectures')
     feed_images = db.relationship('FeedImages', backref='feed')
 
     def get_data_object(self, need_writer=True):
