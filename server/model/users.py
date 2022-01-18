@@ -22,7 +22,7 @@ class Users(db.Model):
             'name' : self.name,
             'phone' : self.phone,
             'birth_year' : self.birth_year,
-            'profile_img_url' : self.profile_img_url,
+            'profile_img_url' : f"https://python202201kbj.s3.ap-northeast-2.amazonaws.com/{self.profile_img_url}" if self.profile_img_url else None,
             'created_at' : str(self.created_at),
             'retired_at' : str(self.retired_at) if self.retired_at else None,
         }

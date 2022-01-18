@@ -7,6 +7,7 @@ import time
 import os
 import hashlib
 from server.model import Users
+from server import db
 
 put_parser = reqparse.RequestParser()
 put_parser.add_argument('profile_image', type=FileStorage, required=True, location='files', action = 'append')
@@ -69,6 +70,11 @@ class UserProfileImage(Resource):
             aws_s3.Bucket(current_app.config['AWS_S3_BUCKET_NAME']).put_object(Key=s3_file_path, Body=file_body)
             #퍼블릭 허용
             aws_s3.ObjectAcl(current_app.config['AWS_S3_BUCKET_NAME'], s3_file_path).put(ACL='public-read')
+            
+            upload_user.profile_img_url = s3_file_path
+            db.session.add(upload_user)
+            db.session.commit()
+
 
         return {
             'code' : 200,
