@@ -2,8 +2,13 @@
 from flask_restful import Resource, reqparse
 from flask_restful_swagger_2 import swagger
 from server import db
-from server.model import Feeds
+from server.model import Feeds, Users
 from werkzeug.datastructures import FileStorage
+import boto3
+from flask import current_app
+import time
+import os
+import hashlib
 
 
 
@@ -65,7 +70,12 @@ class Feed(Resource):
         db.session.commit()
 
         if args['feed_images']:
+
+
             for image in args['feed_images']:
+
+
+
                 pass
 
 
